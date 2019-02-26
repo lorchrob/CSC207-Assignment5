@@ -23,7 +23,7 @@ public class Hash {
   public String toString() {
     String hex = "";
     for (int i = 0; i < data.length; i++) {
-      hex += String.format(Byte.toUnsignedInt(data[i]));
+      hex += String.format("%02x", Byte.toUnsignedInt(data[i]));
     }
     return hex;
   }
