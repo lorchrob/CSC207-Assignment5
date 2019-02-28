@@ -3,14 +3,26 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 public class BlockChainDriver {
+  
+  /*
+   * Main method:
+   *   * Method to utilized 'Block', 'BlockChain', and 'Hash'
+   *   * Start with a blockchain with a single block, and use the given commands
+   *     to build your blockchain
+   *   * The amounts of the blocks in the blockchain correspond to transactions, with
+   *     positive being from Bob to Alice and negative being from Alice to Bob
+   * Preconditions:
+   *   * 1 Command-line argument, which corresponds to 
+   */
+  
   public static void main(String[] args) throws NoSuchAlgorithmException {
     PrintWriter pen = new PrintWriter(System.out, true);
     Scanner scan = new Scanner(System.in);
 
-    BlockChain blockChain = new BlockChain(Integer.parseInt(args[0]));
+    BlockChain blockChain = new BlockChain(Integer.parseInt(args[0])); 
     Block storage = null;
 
-    pen.println(blockChain.toString());
+    pen.print(blockChain.toString());
     pen.println("Command?");
     String input = scan.next();
 
@@ -22,6 +34,7 @@ public class BlockChainDriver {
         int amt = Integer.parseInt(scan.next());
         storage = blockChain.mine(amt);
         pen.println("Amount = " + amt + ", nonce = " + storage.getNonce());
+        pen.println("");
       } else if (input.contentEquals("append")) {
         pen.println("Amount transferred? ");
         int amt = Integer.parseInt(scan.next());
@@ -38,16 +51,20 @@ public class BlockChainDriver {
         } else {
           pen.println("No Block has been mined!");
         }
+        pen.println("");
       } else if (input.contentEquals("remove")) {
         blockChain.removeLast();
+        pen.println("");
       } else if (input.contentEquals("check")) {
         if (blockChain.isValidBlockChain()) {
           pen.println("Chain is valid!");
         } else {
           pen.println("Chain is not valid!");
         }
+        pen.println("");
       } else if (input.contentEquals("report")) {
         blockChain.printBalances();
+        pen.println("");
       } else if (input.contentEquals("help")) {
         pen.println("Valid commands: ");
         pen.println("    mine: discovers the nonce for a given transaction");
@@ -57,10 +74,15 @@ public class BlockChainDriver {
         pen.println("    report: reports the balances of Alice and Bob");
         pen.println("    help: prints this list of commands");
         pen.println("    quit: quits the program");
+        pen.println("");
       } else {
         pen.println("Invalid command.");
+        pen.println("");
       }
-      pen.println(blockChain.toString());
+      
+      // print blockChain and prepare for the next command
+      
+      pen.print(blockChain.toString());
       pen.println("Command?");
       input = scan.next();
     } // while
