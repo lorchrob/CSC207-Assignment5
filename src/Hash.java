@@ -2,12 +2,19 @@ import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 
 public class Hash {
+  
+  // Fields
+  
   byte[] data;
 
+  // Constructor
+  
   public Hash(byte[] data) {
     this.data = data;
   }
 
+  // Methods
+  
   public byte[] getData() {
     return this.data;
   }
@@ -17,7 +24,7 @@ public class Hash {
       return true;
     } else {
       return false;
-    }
+    } 
   }
 
   public String toString() {
