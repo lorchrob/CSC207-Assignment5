@@ -80,8 +80,14 @@ public class Block {
   }
 
   public String toString() {
+    if (this.previousHash != null) {
     return "Block " + this.num + " (Amount: " + this.amount + ", Nonce: " + this.nonce
         + ", prevHash: " + this.previousHash.toString() + ", hash: " + this.currentHash.toString()
         + ")";
+    } else {
+      return "Block " + this.num + " (Amount: " + this.amount + ", Nonce: " + this.nonce
+          + ", prevHash: null, hash: " + this.currentHash.toString()
+          + ")";
+    }
   }
 }
