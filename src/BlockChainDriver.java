@@ -12,7 +12,11 @@ public class BlockChainDriver {
    *   * The amounts of the blocks in the blockchain correspond to transactions, with
    *     positive being from Bob to Alice and negative being from Alice to Bob
    * Preconditions:
-   *   * 1 Command-line argument, which corresponds to 
+   *   * 1 Command-line argument, which corresponds to Alice's initial balance
+   *   * Transactions cannot bring either person below 0 dollars
+   *   * invalid nonces/amounts cannot be added to the blockchain
+   * Postconditions:
+   *   * blockchain is crafted according to the user's input
    */
   
   public static void main(String[] args) throws NoSuchAlgorithmException {
