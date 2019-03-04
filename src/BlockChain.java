@@ -33,12 +33,12 @@ public class BlockChain {
 
   // Purpose: Mine a new Block that could be next in the BlockChain
   // Pre: amount must represent a valid transaction between "Alice and Bob" (i.e. they cannot
-  //      drop below $0
+  // drop below $0
   // Post: Throw an IllegalArgumentException if the Hash of the mined Block is not equal to the
-  //       previousHash of the previous Block
-  //       Throw an IllegalArgumentException if the Hash of the mined Block is not valid (does
-  //       not start with 000)
-  //       Return a Block which should be valid to append (see below) to the current BlockChain
+  // previousHash of the previous Block
+  // Throw an IllegalArgumentException if the Hash of the mined Block is not valid (does
+  // not start with 000)
+  // Return a Block which should be valid to append (see below) to the current BlockChain
   public Block mine(int amount) throws NoSuchAlgorithmException, IllegalArgumentException {
     Block blk = new Block(this.last.val.getNum() + 1, amount, this.last.val.getHash());
     if (this.last.val.getHash() != blk.getPrevHash()) {
@@ -58,41 +58,23 @@ public class BlockChain {
 
   // Purpose: Add a new Block (wrapped in a Node) to the end of the BlockChain
   // Pre: blk must be a valid Block (in terms of its Hash and ability to be attached to the
-  //      BlockChain)
+  // BlockChain)
   // Post: The last field of the current BlockChain is now blk (wrapped in a Node)
-  //       The next field of the previous Node points to blk's Node
-  //       Throw an IllegalArgumentException instead if the amount of blk would result in a
-  //       negative total for Alice or Bob.
+  // The next field of the previous Node points to blk's Node
+  // NOTE: in the previous commit, this method checked to see if the block was valid (as specified
+  //       in the instructions), but Sam told us to allow an invalid append so that 'isValidBlockChain
+  //       could be used
   public void append(Block blk) throws IllegalArgumentException {
-    // Initialize a new Node with the given Block, as well as values to keep track of Alice
-    // and Bob's totals throughout the transactions represented by the existing BlockChain
     Node<Block> newNode = new Node<Block>(blk, null);
-    int aliceAmt = this.first.val.getAmount();
-    int bobAmt = 0;
-    Node<Block> thisNode = this.first.next;
-    // Nonfunctional iteration tactic; left for posterity/possible future review
-    // for (int i = 0; i < this.getSize(); i++) {
-    // Iterate through the existing BlockChain to find Alice and Bob's totals before adding blk
-    // to the end of the BlockChain
-    while (thisNode != null) {
-      aliceAmt += thisNode.val.getAmount();
-      bobAmt -= thisNode.val.getAmount();
-      thisNode = thisNode.next;
-    } // for
-    // Throw an IllegalArgumentException if the amount field of blk would result in invalid
-    // money totals for either Alice or Bob
-    if ((aliceAmt + newNode.val.getAmount() < 0) || (bobAmt - newNode.val.getAmount() < 0)) {
-      throw new IllegalArgumentException("The parameter Block has an invalid amount field!");
-    } else {
-      // Assuming all conditions are met, append blk's Node to the end of the current BlockChain
-      this.last.next = newNode;
-      this.last = this.last.next;
-    }
+    this.last.next = newNode;
+    this.last = this.last.next;
   }
+
+
 
   // Purpose: Remove the last Block's Node from the BlockChain
   // Post: Return true if the last Block's Node was successfully removed from the BlockChain
-  //       Return false if there weren't at least two Nodes in the BlockChain
+  // Return false if there weren't at least two Nodes in the BlockChain
   public boolean removeLast() {
     if (this.getSize() > 1) {
       // Iterate through the existing BlockChain to get the second to last Node
@@ -116,18 +98,30 @@ public class BlockChain {
   }
 
   // Purpose: Find whether the BlockChain is valid (in terms of the Hashes matching up between
-  //          adjacent Blocks
-  // Post: Return true if all the Hashes match Block to Block, return false if not.
+  // adjacent Blocks and having positive amounts)
+  // Post: Return true if all the Hashes match Block to Block and all balances are positive, return false if not.
   public boolean isValidBlockChain() {
     if (this.getSize() > 1) {
-      // iterate through all the Nodes, checking the Hashes of the corresponding Blocks
+      // iterate through all the Nodes
       Node<Block> thisNode = this.first;
-      for (int i = 0; i < (this.getSize() - 1); i++) {
-        if (thisNode.val.getHash() != thisNode.next.val.getPrevHash()) {
+
+      int aliceAmt = 0;
+      int bobAmt = thisNode.val.getAmount(); // start at this amount because we subtract from Bob's value
+      while (thisNode != null) {
+        aliceAmt += thisNode.val.getAmount();
+        bobAmt -= thisNode.val.getAmount();
+        
+        if (thisNode.next != null) {
+          if (thisNode.val.getHash() != thisNode.next.val.getPrevHash()) {
+            return false;
+          }
+        } 
+        
+        if ((aliceAmt < 0) || (bobAmt < 0)) {
           return false;
-        } // if
+        }
         thisNode = thisNode.next;
-      } // for
+      } // while
       return true;
     } else {
       return true;
@@ -155,7 +149,7 @@ public class BlockChain {
 
   // Purpose: Use the Block class's toString on all of the Blocks in the BlockChain
   // Post: Return a String that is an organized collection of all of the toStrings of the Blocks
-  //       in the BlockChain
+  // in the BlockChain
   public String toString() {
     Node<Block> thisNode = this.first;
     String ret = "";
